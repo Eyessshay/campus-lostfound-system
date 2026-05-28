@@ -1,0 +1,124 @@
+# Campus Lost & Found System
+
+## Project Overview
+
+This is a PHP + MySQL based campus lost and found system.
+
+The project is a simple course project for web development learning.
+
+Main features:
+
+- User register/login
+- Session authentication
+- Publish lost/found items
+- Upload item images
+- Search items
+- Edit/delete own posts
+- Admin management
+
+---
+
+# Tech Stack
+
+Frontend:
+- HTML
+- CSS
+- JavaScript
+- jQuery
+
+Backend:
+- PHP 7
+- Apache
+
+Database:
+- MySQL
+
+Environment:
+- AppServ
+
+---
+
+# Project Structure
+
+lostfound/
+
+├── index.php
+├── login.php
+├── register.php
+├── publish.php
+├── detail.php
+
+├── api/
+│   ├── login_action.php
+│   ├── register_action.php
+│   ├── publish_action.php
+│   ├── delete_action.php
+│   └── logout.php
+
+├── config/
+│   └── db.php
+
+├── uploads/
+
+├── css/
+├── js/
+└── images/
+
+---
+
+# Coding Rules
+
+- Use procedural PHP
+- Use mysqli instead of PDO
+- Do not use frameworks
+- Keep code simple for beginners
+- Use separate PHP files for each function
+- Use Session for login authentication
+- Use password_hash() for passwords
+- Use move_uploaded_file() for image upload
+
+---
+
+# Database Rules
+
+Database name:
+lostfound
+
+Main tables:
+- users
+- lost_items
+- categories
+- messages
+
+Relationships:
+- One user can publish many items
+- One category can contain many items
+- One item can contain many messages
+
+---
+
+# Development Goals
+
+The project should prioritize:
+1. Simplicity
+2. Readability
+3. Easy debugging
+4. Beginner-friendly structure
+
+Avoid:
+- Complex frameworks
+- MVC architecture
+- Composer
+- Laravel
+- Advanced routing
+
+---
+
+# Current Development Stage
+
+Currently building:
+1. Database connection
+2. User register/login
+3. Session authentication
+
+Please generate code according to the existing folder structure.
