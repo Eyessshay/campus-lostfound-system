@@ -2,43 +2,46 @@
 
 ## Project Overview
 
-This is a PHP + MySQL based campus lost and found system.
+This is a beginner-friendly PHP + MySQL campus lost and found system.
 
-The project is a simple course project for web development learning.
+The project is a university course assignment.
 
 Main features:
 
-- User register/login
-- Session authentication
-- Publish lost/found items
-- Upload item images
-- Search items
-- Edit/delete own posts
-- Admin management
+* User register/login
+* Session authentication
+* Publish lost/found items
+* Upload images
+* Search items
+* Admin management
 
 ---
 
 # Tech Stack
 
 Frontend:
-- HTML
-- CSS
-- JavaScript
-- jQuery
+
+* HTML
+* CSS
+* JavaScript
+* jQuery
 
 Backend:
-- PHP 7
-- Apache
+
+* PHP7 procedural programming
+* Apache
 
 Database:
-- MySQL
+
+* MySQL
 
 Environment:
-- AppServ
+
+* AppServ
 
 ---
 
-# Project Structure
+# Folder Structure
 
 lostfound/
 
@@ -68,57 +71,26 @@ lostfound/
 
 # Coding Rules
 
-- Use procedural PHP
-- Use mysqli instead of PDO
-- Do not use frameworks
-- Keep code simple for beginners
-- Use separate PHP files for each function
-- Use Session for login authentication
-- Use password_hash() for passwords
-- Use move_uploaded_file() for image upload
+* Use procedural PHP
+* Use mysqli
+* Do NOT use PDO
+* Do NOT use frameworks
+* Do NOT use Laravel
+* Do NOT use Composer
+* Keep code beginner-friendly
+* Use Session for login
+* Use password_hash()
+* Use move_uploaded_file()
 
 ---
 
-# Database Rules
+# Development Priority
 
-Database name:
-lostfound
+Current stage:
 
-Main tables:
-- users
-- lost_items
-- categories
-- messages
+1. Project initialization
+2. Database connection
+3. User register/login
+4. Session authentication
 
-Relationships:
-- One user can publish many items
-- One category can contain many items
-- One item can contain many messages
-
----
-
-# Development Goals
-
-The project should prioritize:
-1. Simplicity
-2. Readability
-3. Easy debugging
-4. Beginner-friendly structure
-
-Avoid:
-- Complex frameworks
-- MVC architecture
-- Composer
-- Laravel
-- Advanced routing
-
----
-
-# Current Development Stage
-
-Currently building:
-1. Database connection
-2. User register/login
-3. Session authentication
-
-Please generate code according to the existing folder structure.
+Please keep the project simple and suitable for beginners.
