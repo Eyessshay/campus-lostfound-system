@@ -1,9 +1,15 @@
 <?php
 session_start();
+require_once 'config/db.php';
 
 $is_login = isset($_SESSION['user_id']);
 $username = $is_login ? $_SESSION['username'] : '';
-$role = $is_login ? $_SESSION['role'] : '';
+
+$lost_sql = "SELECT * FROM lost_items ORDER BY created_at DESC";
+$found_sql = "SELECT * FROM found_items ORDER BY created_at DESC";
+
+$lost_result = mysqli_query($conn, $lost_sql);
+$found_result = mysqli_query($conn, $found_sql);
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -21,6 +27,7 @@ $role = $is_login ? $_SESSION['role'] : '';
             <div class="ms-auto d-flex align-items-center gap-2">
                 <?php if ($is_login): ?>
                     <span class="text-muted">欢迎，<?php echo htmlspecialchars($username); ?></span>
+                    <a class="btn btn-primary btn-sm" href="publish.php">发布信息</a>
                     <a class="btn btn-outline-secondary btn-sm" href="api/logout.php">退出登录</a>
                 <?php else: ?>
                     <a class="btn btn-outline-primary btn-sm" href="login.php">登录</a>
@@ -31,31 +38,71 @@ $role = $is_login ? $_SESSION['role'] : '';
     </nav>
 
     <main class="container py-5">
-        <div class="row justify-content-center">
-            <div class="col-12 col-lg-8">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-4 p-md-5">
-                        <h1 class="h3 mb-3">校园失物招领系统</h1>
-                        <p class="text-muted mb-4">这里将用于发布、查看和管理校园失物与招领信息。</p>
-
-                        <?php if ($is_login): ?>
-                            <div class="alert alert-success mb-4" role="alert">
-                                当前已登录，身份：<?php echo htmlspecialchars($role); ?>
-                            </div>
-                            <a class="btn btn-primary" href="publish.php">发布信息</a>
-                        <?php else: ?>
-                            <div class="alert alert-warning mb-4" role="alert">
-                                请先登录后再发布失物或招领信息。
-                            </div>
-                            <a class="btn btn-primary me-2" href="login.php">去登录</a>
-                            <a class="btn btn-outline-primary" href="register.php">去注册</a>
-                        <?php endif; ?>
-                    </div>
-                </div>
-            </div>
+        <div class="mb-4">
+            <h1 class="h3 mb-2">校园失物招领系统</h1>
+            <p class="text-muted mb-0">查看校园失物和招领信息，登录后可以发布新的信息。</p>
         </div>
+
+        <section class="mb-5">
+            <h2 class="h5 mb-3">失物信息</h2>
+            <div class="row g-3">
+                <?php if ($lost_result && mysqli_num_rows($lost_result) > 0): ?>
+                    <?php while ($lost = mysqli_fetch_assoc($lost_result)): ?>
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="card h-100 shadow-sm border-0">
+                                <?php if ($lost['image'] !== ''): ?>
+                                    <img src="<?php echo htmlspecialchars($lost['image']); ?>" class="card-img-top" alt="失物图片">
+                                <?php endif; ?>
+                                <div class="card-body">
+                                    <h3 class="h6 card-title"><?php echo htmlspecialchars($lost['title']); ?></h3>
+                                    <p class="card-text text-muted"><?php echo htmlspecialchars($lost['description']); ?></p>
+                                    <p class="mb-1">地点：<?php echo htmlspecialchars($lost['lost_location']); ?></p>
+                                    <p class="mb-1">时间：<?php echo htmlspecialchars($lost['lost_time']); ?></p>
+                                    <a class="btn btn-outline-primary btn-sm mt-2" href="detail.php?type=lost&id=<?php echo $lost['lost_id']; ?>">查看详情</a>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div class="col-12">
+                        <div class="alert alert-light border">暂无失物信息。</div>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="h5 mb-3">招领信息</h2>
+            <div class="row g-3">
+                <?php if ($found_result && mysqli_num_rows($found_result) > 0): ?>
+                    <?php while ($found = mysqli_fetch_assoc($found_result)): ?>
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="card h-100 shadow-sm border-0">
+                                <?php if ($found['image'] !== ''): ?>
+                                    <img src="<?php echo htmlspecialchars($found['image']); ?>" class="card-img-top" alt="招领图片">
+                                <?php endif; ?>
+                                <div class="card-body">
+                                    <h3 class="h6 card-title"><?php echo htmlspecialchars($found['title']); ?></h3>
+                                    <p class="card-text text-muted"><?php echo htmlspecialchars($found['description']); ?></p>
+                                    <p class="mb-1">地点：<?php echo htmlspecialchars($found['found_location']); ?></p>
+                                    <p class="mb-1">时间：<?php echo htmlspecialchars($found['found_time']); ?></p>
+                                    <a class="btn btn-outline-primary btn-sm mt-2" href="detail.php?type=found&id=<?php echo $found['found_id']; ?>">查看详情</a>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div class="col-12">
+                        <div class="alert alert-light border">暂无招领信息。</div>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </section>
     </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+<?php
+mysqli_close($conn);
+?>
