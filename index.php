@@ -28,6 +28,7 @@ $found_result = mysqli_query($conn, $found_sql);
                 <?php if ($is_login): ?>
                     <span class="text-muted">欢迎，<?php echo htmlspecialchars($username); ?></span>
                     <a class="btn btn-primary btn-sm" href="publish.php">发布信息</a>
+                    <a class="btn btn-outline-primary btn-sm" href="my_posts.php">我的发布</a>
                     <a class="btn btn-outline-secondary btn-sm" href="api/logout.php">退出登录</a>
                 <?php else: ?>
                     <a class="btn btn-outline-primary btn-sm" href="login.php">登录</a>
