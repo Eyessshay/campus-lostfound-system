@@ -2,6 +2,7 @@
 require_once 'config/auth.php';
 
 $username = $_SESSION['username'];
+$success = isset($_GET['success']) && $_GET['success'] === '1';
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -28,8 +29,53 @@ $username = $_SESSION['username'];
                 <div class="card border-0 shadow-sm">
                     <div class="card-body p-4 p-md-5">
                         <h1 class="h3 mb-3">发布信息</h1>
-                        <p class="text-muted mb-4">你已经登录，可以继续开发失物或招领信息发布表单。</p>
-                        <a class="btn btn-outline-primary" href="index.php">返回首页</a>
+
+                        <?php if ($success): ?>
+                            <div class="alert alert-success" role="alert">发布成功！</div>
+                        <?php endif; ?>
+
+                        <form action="api/publish_action.php" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label">发布类型</label>
+                                <select class="form-select" name="type" required>
+                                    <option value="lost">失物</option>
+                                    <option value="found">招领</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="title" class="form-label">标题</label>
+                                <input type="text" class="form-control" id="title" name="title" maxlength="100" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">描述</label>
+                                <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="location" class="form-label">地点</label>
+                                <input type="text" class="form-control" id="location" name="location" maxlength="100" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="item_time" class="form-label">时间</label>
+                                <input type="datetime-local" class="form-control" id="item_time" name="item_time" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="contact" class="form-label">联系方式</label>
+                                <input type="text" class="form-control" id="contact" name="contact" maxlength="50" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="image" class="form-label">图片</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">提交发布</button>
+                            <a class="btn btn-outline-secondary ms-2" href="index.php">返回首页</a>
+                        </form>
                     </div>
                 </div>
             </div>
