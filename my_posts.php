@@ -6,7 +6,7 @@ $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 
 // 获取消息
-$success = isset($_GET['success']) && $_GET['success'] === '1';
+$delete_success = isset($_GET['delete']) && $_GET['delete'] === 'success';
 $error = isset($_GET['error']) ? $_GET['error'] : '';
 
 // 错误消息映射
@@ -81,7 +81,7 @@ function getStatusColor($status, $type) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的发布 - 校园失物招领系统</title>
+    <title>我的发布信息 - 校园失物招领系统</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
@@ -99,13 +99,13 @@ function getStatusColor($status, $type) {
         <div class="row justify-content-center">
             <div class="col-12 col-lg-10">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h1 class="h3 mb-0">我的发布</h1>
+                    <h1 class="h3 mb-0">我的发布信息</h1>
                     <a href="publish.php" class="btn btn-primary">+ 发布新信息</a>
                 </div>
 
-                <?php if ($success): ?>
+                <?php if ($delete_success): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <strong>成功！</strong>信息已删除。
+                        删除成功！
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 <?php endif; ?>
@@ -179,7 +179,7 @@ function getStatusColor($status, $type) {
                                                         <div class="d-flex gap-2">
                                                             <a href="detail.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
                                                                class="btn btn-sm btn-outline-primary">查看详情</a>
-                                                            <a href="api/update_lost.php?id=<?php echo $item['lost_id']; ?>" 
+                                                                                <a href="edit_post.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
                                                                class="btn btn-sm btn-outline-secondary">编辑</a>
                                                             <a href="api/delete_action.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
                                                                class="btn btn-sm btn-outline-danger"
@@ -262,7 +262,7 @@ function getStatusColor($status, $type) {
                                                         <div class="d-flex gap-2">
                                                             <a href="detail.php?type=found&id=<?php echo $item['found_id']; ?>" 
                                                                class="btn btn-sm btn-outline-primary">查看详情</a>
-                                                            <a href="api/update_found.php?id=<?php echo $item['found_id']; ?>" 
+                                                                                <a href="edit_post.php?type=found&id=<?php echo $item['found_id']; ?>" 
                                                                class="btn btn-sm btn-outline-secondary">编辑</a>
                                                             <a href="api/delete_action.php?type=found&id=<?php echo $item['found_id']; ?>" 
                                                                class="btn btn-sm btn-outline-danger"
