@@ -66,7 +66,7 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         exit('仅支持 JPG、JPEG、PNG、GIF 图片');
     }
 
-    $file_name = time() . '.' . $ext;
+    $file_name = uniqid('img_', true) . '.' . $ext;
     $save_path = '../uploads/' . $file_name;
 
     if (move_uploaded_file($_FILES['image']['tmp_name'], $save_path)) {

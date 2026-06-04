@@ -28,8 +28,18 @@ if ($type === '' || $title === '' || $description === '' || $location === '' || 
 $item_time = str_replace('T', ' ', $item_time) . ':00';
 
 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-    $ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-    $file_name = time() . '.' . $ext;
+    if ($_FILES['image']['size'] > 2 * 1024 * 1024) {
+        exit('图片大小不能超过2MB');
+    }
+
+    $ext = strtolower(pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION));
+    $allowed = ['jpg', 'jpeg', 'png', 'gif'];
+
+    if (!in_array($ext, $allowed, true)) {
+        exit('仅支持 JPG、JPEG、PNG、GIF 图片');
+    }
+
+    $file_name = uniqid('img_', true) . '.' . $ext;
     $save_path = '../uploads/' . $file_name;
 
     if (move_uploaded_file($_FILES['image']['tmp_name'], $save_path)) {

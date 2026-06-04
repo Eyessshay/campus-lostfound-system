@@ -8,6 +8,7 @@ $username = $_SESSION['username'];
 // 获取消息
 $delete_success = isset($_GET['delete']) && $_GET['delete'] === 'success';
 $status_success = isset($_GET['status']) && $_GET['status'] === 'success';
+$update_success = isset($_GET['update']) && $_GET['update'] === 'success';
 $error = isset($_GET['error']) ? $_GET['error'] : '';
 
 // 错误消息映射
@@ -104,6 +105,13 @@ function getStatusColor($status, $type) {
                     <h1 class="h3 mb-0">我的发布信息</h1>
                     <a href="publish.php" class="btn btn-primary">+ 发布新信息</a>
                 </div>
+
+                <?php if ($update_success): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        信息修改成功！
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
 
                 <?php if ($status_success): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
