@@ -41,6 +41,21 @@ if ($type === 'lost') {
 }
 
 mysqli_stmt_fetch($stmt);
+
+function getStatusLabelAndClass($status, $type) {
+    $map = [
+        'lost' => [
+            'pending' => ['未找回', 'warning'],
+            'found' => ['已找回', 'success'],
+        ],
+        'found' => [
+            'unclaimed' => ['未认领', 'warning'],
+            'claimed' => ['已认领', 'success'],
+        ],
+    ];
+
+    return $map[$type][$status] ?? [$status, 'secondary'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -81,7 +96,11 @@ mysqli_stmt_fetch($stmt);
                             <span class="badge text-bg-primary"><?php echo $page_title; ?></span>
                         </div>
 
-                        <h1 class="h3 mb-3"><?php echo htmlspecialchars($title); ?></h1>
+                        <h1 class="h3 mb-2"><?php echo htmlspecialchars($title); ?></h1>
+                        <?php [$status_label, $status_class] = getStatusLabelAndClass($status, $type); ?>
+                        <div class="mb-3">
+                            <span class="badge bg-<?php echo $status_class; ?>"><?php echo htmlspecialchars($status_label); ?></span>
+                        </div>
 
                         <p class="text-muted"><?php echo nl2br(htmlspecialchars($description)); ?></p>
 

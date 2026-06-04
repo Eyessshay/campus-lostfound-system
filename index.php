@@ -10,6 +10,21 @@ $found_sql = "SELECT * FROM found_items ORDER BY created_at DESC";
 
 $lost_result = mysqli_query($conn, $lost_sql);
 $found_result = mysqli_query($conn, $found_sql);
+
+function getStatusLabelAndClass($status, $type) {
+    $map = [
+        'lost' => [
+            'pending' => ['未找回', 'warning'],
+            'found' => ['已找回', 'success'],
+        ],
+        'found' => [
+            'unclaimed' => ['未认领', 'warning'],
+            'claimed' => ['已认领', 'success'],
+        ],
+    ];
+
+    return $map[$type][$status] ?? [$status, 'secondary'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">
@@ -55,7 +70,11 @@ $found_result = mysqli_query($conn, $found_sql);
                                     <img src="<?php echo htmlspecialchars($lost['image']); ?>" class="card-img-top" alt="失物图片">
                                 <?php endif; ?>
                                 <div class="card-body">
-                                    <h3 class="h6 card-title"><?php echo htmlspecialchars($lost['title']); ?></h3>
+                                    <?php [$lost_status_label, $lost_status_class] = getStatusLabelAndClass($lost['status'], 'lost'); ?>
+                                    <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
+                                        <h3 class="h6 card-title mb-0"><?php echo htmlspecialchars($lost['title']); ?></h3>
+                                        <span class="badge bg-<?php echo $lost_status_class; ?> text-nowrap"><?php echo htmlspecialchars($lost_status_label); ?></span>
+                                    </div>
                                     <p class="card-text text-muted"><?php echo htmlspecialchars($lost['description']); ?></p>
                                     <p class="mb-1">地点：<?php echo htmlspecialchars($lost['lost_location']); ?></p>
                                     <p class="mb-1">时间：<?php echo htmlspecialchars($lost['lost_time']); ?></p>
@@ -83,7 +102,11 @@ $found_result = mysqli_query($conn, $found_sql);
                                     <img src="<?php echo htmlspecialchars($found['image']); ?>" class="card-img-top" alt="招领图片">
                                 <?php endif; ?>
                                 <div class="card-body">
-                                    <h3 class="h6 card-title"><?php echo htmlspecialchars($found['title']); ?></h3>
+                                    <?php [$found_status_label, $found_status_class] = getStatusLabelAndClass($found['status'], 'found'); ?>
+                                    <div class="d-flex align-items-start justify-content-between gap-2 mb-1">
+                                        <h3 class="h6 card-title mb-0"><?php echo htmlspecialchars($found['title']); ?></h3>
+                                        <span class="badge bg-<?php echo $found_status_class; ?> text-nowrap"><?php echo htmlspecialchars($found_status_label); ?></span>
+                                    </div>
                                     <p class="card-text text-muted"><?php echo htmlspecialchars($found['description']); ?></p>
                                     <p class="mb-1">地点：<?php echo htmlspecialchars($found['found_location']); ?></p>
                                     <p class="mb-1">时间：<?php echo htmlspecialchars($found['found_time']); ?></p>
