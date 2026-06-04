@@ -7,13 +7,15 @@ $username = $_SESSION['username'];
 
 // 获取消息
 $delete_success = isset($_GET['delete']) && $_GET['delete'] === 'success';
+$status_success = isset($_GET['status']) && $_GET['status'] === 'success';
 $error = isset($_GET['error']) ? $_GET['error'] : '';
 
 // 错误消息映射
 $error_messages = [
     'invalid_params' => '无效的参数',
     'invalid_id' => '无效的ID',
-    'not_found' => '记录不存在或您无权删除',
+    'not_found' => '信息不存在或无权限操作！',
+    'status_failed' => '状态更新失败！',
     'delete_failed' => '删除失败，请稍后重试'
 ];
 
@@ -103,6 +105,13 @@ function getStatusColor($status, $type) {
                     <a href="publish.php" class="btn btn-primary">+ 发布新信息</a>
                 </div>
 
+                <?php if ($status_success): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        状态更新成功！
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+
                 <?php if ($delete_success): ?>
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
                         删除成功！
@@ -179,6 +188,11 @@ function getStatusColor($status, $type) {
                                                         <div class="d-flex gap-2">
                                                             <a href="detail.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
                                                                class="btn btn-sm btn-outline-primary">查看详情</a>
+                                                                                <?php if ($item['status'] === 'pending'): ?>
+                                                                                     <a href="api/update_status.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
+                                                                                         class="btn btn-sm btn-success"
+                                                                                         onclick="return confirm('确认已经找回该物品吗？');">标记已找回</a>
+                                                                                <?php endif; ?>
                                                                                 <a href="edit_post.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
                                                                class="btn btn-sm btn-outline-secondary">编辑</a>
                                                             <a href="api/delete_action.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
@@ -262,6 +276,11 @@ function getStatusColor($status, $type) {
                                                         <div class="d-flex gap-2">
                                                             <a href="detail.php?type=found&id=<?php echo $item['found_id']; ?>" 
                                                                class="btn btn-sm btn-outline-primary">查看详情</a>
+                                                                                <?php if ($item['status'] === 'unclaimed'): ?>
+                                                                                     <a href="api/update_status.php?type=found&id=<?php echo $item['found_id']; ?>" 
+                                                                                         class="btn btn-sm btn-success"
+                                                                                         onclick="return confirm('确认该物品已经被认领吗？');">标记已认领</a>
+                                                                                <?php endif; ?>
                                                                                 <a href="edit_post.php?type=found&id=<?php echo $item['found_id']; ?>" 
                                                                class="btn btn-sm btn-outline-secondary">编辑</a>
                                                             <a href="api/delete_action.php?type=found&id=<?php echo $item['found_id']; ?>" 
