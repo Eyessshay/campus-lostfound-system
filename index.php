@@ -5,11 +5,33 @@ require_once 'config/db.php';
 $is_login = isset($_SESSION['user_id']);
 $username = $is_login ? $_SESSION['username'] : '';
 
-$lost_sql = "SELECT * FROM lost_items ORDER BY created_at DESC";
-$found_sql = "SELECT * FROM found_items ORDER BY created_at DESC";
+$keyword = trim($_GET['keyword'] ?? '');
+$search_param = '';
 
-$lost_result = mysqli_query($conn, $lost_sql);
-$found_result = mysqli_query($conn, $found_sql);
+if ($keyword !== '') {
+    $search_param = '%' . $keyword . '%';
+    
+    $lost_sql = "SELECT * FROM lost_items WHERE title LIKE ? OR description LIKE ? ORDER BY created_at DESC";
+    $lost_stmt = mysqli_prepare($conn, $lost_sql);
+    mysqli_stmt_bind_param($lost_stmt, "ss", $search_param, $search_param);
+    mysqli_stmt_execute($lost_stmt);
+    $lost_result = mysqli_stmt_get_result($lost_stmt);
+    
+    $found_sql = "SELECT * FROM found_items WHERE title LIKE ? OR description LIKE ? ORDER BY created_at DESC";
+    $found_stmt = mysqli_prepare($conn, $found_sql);
+    mysqli_stmt_bind_param($found_stmt, "ss", $search_param, $search_param);
+    mysqli_stmt_execute($found_stmt);
+    $found_result = mysqli_stmt_get_result($found_stmt);
+} else {
+    $lost_sql = "SELECT * FROM lost_items ORDER BY created_at DESC";
+    $found_sql = "SELECT * FROM found_items ORDER BY created_at DESC";
+    
+    $lost_result = mysqli_query($conn, $lost_sql);
+    $found_result = mysqli_query($conn, $found_sql);
+}
+
+$lost_count = mysqli_num_rows($lost_result);
+$found_count = mysqli_num_rows($found_result);
 
 function getStatusLabelAndClass($status, $type) {
     $map = [
@@ -59,10 +81,33 @@ function getStatusLabelAndClass($status, $type) {
             <p class="text-muted mb-0">查看校园失物和招领信息，登录后可以发布新的信息。</p>
         </div>
 
+        <div class="mb-4">
+            <form method="GET" action="index.php" class="d-flex gap-2">
+                <input type="text" name="keyword" class="form-control" placeholder="搜索失物或招领信息..." value="<?php echo htmlspecialchars($keyword); ?>">
+                <button type="submit" class="btn btn-primary">搜索</button>
+                <?php if ($keyword !== ''): ?>
+                    <a href="index.php" class="btn btn-outline-secondary">清空</a>
+                <?php endif; ?>
+            </form>
+        </div>
+
+        <?php if ($keyword !== ''): ?>
+            <div class="alert alert-info" role="alert">
+                正在搜索："<?php echo htmlspecialchars($keyword); ?>"<br>
+                共找到 <?php echo $lost_count + $found_count; ?> 条相关信息
+            </div>
+        <?php endif; ?>
+
+        <?php if ($keyword !== '' && $lost_count === 0 && $found_count === 0): ?>
+            <div class="alert alert-warning" role="alert">
+                未找到相关信息。
+            </div>
+        <?php endif; ?>
+
         <section class="mb-5">
             <h2 class="h5 mb-3">失物信息</h2>
             <div class="row g-3">
-                <?php if ($lost_result && mysqli_num_rows($lost_result) > 0): ?>
+                <?php if ($lost_count > 0): ?>
                     <?php while ($lost = mysqli_fetch_assoc($lost_result)): ?>
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="card h-100 shadow-sm border-0">
@@ -94,7 +139,7 @@ function getStatusLabelAndClass($status, $type) {
         <section>
             <h2 class="h5 mb-3">招领信息</h2>
             <div class="row g-3">
-                <?php if ($found_result && mysqli_num_rows($found_result) > 0): ?>
+                <?php if ($found_count > 0): ?>
                     <?php while ($found = mysqli_fetch_assoc($found_result)): ?>
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="card h-100 shadow-sm border-0">
@@ -128,5 +173,11 @@ function getStatusLabelAndClass($status, $type) {
 </body>
 </html>
 <?php
+if (isset($lost_stmt)) {
+    mysqli_stmt_close($lost_stmt);
+}
+if (isset($found_stmt)) {
+    mysqli_stmt_close($found_stmt);
+}
 mysqli_close($conn);
 ?>
