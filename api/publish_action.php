@@ -25,7 +25,11 @@ if ($type === '' || $title === '' || $description === '' || $location === '' || 
     exit('请填写完整信息');
 }
 
-$item_time = str_replace('T', ' ', $item_time) . ':00';
+// Convert time format from HTML5 datetime-local to MySQL datetime format
+$item_time = date('Y-m-d H:i:s', strtotime($item_time));
+if ($item_time === '1970-01-01 08:00:00' || !$item_time) {
+    exit('时间格式错误');
+}
 
 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
     if ($_FILES['image']['size'] > 2 * 1024 * 1024) {
@@ -37,6 +41,12 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
 
     if (!in_array($ext, $allowed, true)) {
         exit('仅支持 JPG、JPEG、PNG、GIF 图片');
+    }
+
+    // Validate that the uploaded file is actually an image
+    $image_info = getimagesize($_FILES['image']['tmp_name']);
+    if ($image_info === false) {
+        exit('上传的文件不是有效的图片');
     }
 
     $file_name = uniqid('img_', true) . '.' . $ext;

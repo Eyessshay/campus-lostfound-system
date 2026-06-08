@@ -11,20 +11,20 @@ $search_param = '';
 if ($keyword !== '') {
     $search_param = '%' . $keyword . '%';
     
-    $lost_sql = "SELECT * FROM lost_items WHERE title LIKE ? OR description LIKE ? ORDER BY created_at DESC";
+    $lost_sql = "SELECT li.*, u.username FROM lost_items li LEFT JOIN users u ON li.user_id = u.user_id WHERE li.title LIKE ? OR li.description LIKE ? ORDER BY li.created_at DESC";
     $lost_stmt = mysqli_prepare($conn, $lost_sql);
     mysqli_stmt_bind_param($lost_stmt, "ss", $search_param, $search_param);
     mysqli_stmt_execute($lost_stmt);
     $lost_result = mysqli_stmt_get_result($lost_stmt);
     
-    $found_sql = "SELECT * FROM found_items WHERE title LIKE ? OR description LIKE ? ORDER BY created_at DESC";
+    $found_sql = "SELECT fi.*, u.username FROM found_items fi LEFT JOIN users u ON fi.user_id = u.user_id WHERE fi.title LIKE ? OR fi.description LIKE ? ORDER BY fi.created_at DESC";
     $found_stmt = mysqli_prepare($conn, $found_sql);
     mysqli_stmt_bind_param($found_stmt, "ss", $search_param, $search_param);
     mysqli_stmt_execute($found_stmt);
     $found_result = mysqli_stmt_get_result($found_stmt);
 } else {
-    $lost_sql = "SELECT * FROM lost_items ORDER BY created_at DESC";
-    $found_sql = "SELECT * FROM found_items ORDER BY created_at DESC";
+    $lost_sql = "SELECT li.*, u.username FROM lost_items li LEFT JOIN users u ON li.user_id = u.user_id ORDER BY li.created_at DESC";
+    $found_sql = "SELECT fi.*, u.username FROM found_items fi LEFT JOIN users u ON fi.user_id = u.user_id ORDER BY fi.created_at DESC";
     
     $lost_result = mysqli_query($conn, $lost_sql);
     $found_result = mysqli_query($conn, $found_sql);
@@ -111,7 +111,7 @@ function getStatusLabelAndClass($status, $type) {
                     <?php while ($lost = mysqli_fetch_assoc($lost_result)): ?>
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="card h-100 shadow-sm border-0">
-                                <?php if ($lost['image'] !== ''): ?>
+                                <?php if (!empty($lost['image'])): ?>
                                     <img src="<?php echo htmlspecialchars($lost['image']); ?>" class="card-img-top" alt="失物图片">
                                 <?php endif; ?>
                                 <div class="card-body">
@@ -123,7 +123,14 @@ function getStatusLabelAndClass($status, $type) {
                                     <p class="card-text text-muted"><?php echo htmlspecialchars($lost['description']); ?></p>
                                     <p class="mb-1">地点：<?php echo htmlspecialchars($lost['lost_location']); ?></p>
                                     <p class="mb-1">时间：<?php echo htmlspecialchars($lost['lost_time']); ?></p>
-                                    <a class="btn btn-outline-primary btn-sm mt-2" href="detail.php?type=lost&id=<?php echo $lost['lost_id']; ?>">查看详情</a>
+                                    <p class="mb-2 small text-secondary">发布者：<?php echo htmlspecialchars($lost['username'] ?? '用户'); ?> | 发布时间：<?php echo htmlspecialchars($lost['created_at']); ?></p>
+                                    <div class="d-flex gap-2">
+                                        <a class="btn btn-outline-primary btn-sm flex-grow-1" href="detail.php?type=lost&id=<?php echo $lost['lost_id']; ?>">查看详情</a>
+                                        <?php if ($is_login && (int)$lost['user_id'] === (int)$_SESSION['user_id']): ?>
+                                            <a class="btn btn-outline-warning btn-sm" href="edit_post.php?type=lost&id=<?php echo $lost['lost_id']; ?>">编辑</a>
+                                            <a class="btn btn-outline-danger btn-sm" href="api/delete_action.php?type=lost&id=<?php echo $lost['lost_id']; ?>" onclick="return confirm('确定要删除吗？');">删除</a>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -143,7 +150,7 @@ function getStatusLabelAndClass($status, $type) {
                     <?php while ($found = mysqli_fetch_assoc($found_result)): ?>
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="card h-100 shadow-sm border-0">
-                                <?php if ($found['image'] !== ''): ?>
+                                <?php if (!empty($found['image'])): ?>
                                     <img src="<?php echo htmlspecialchars($found['image']); ?>" class="card-img-top" alt="招领图片">
                                 <?php endif; ?>
                                 <div class="card-body">
@@ -155,7 +162,14 @@ function getStatusLabelAndClass($status, $type) {
                                     <p class="card-text text-muted"><?php echo htmlspecialchars($found['description']); ?></p>
                                     <p class="mb-1">地点：<?php echo htmlspecialchars($found['found_location']); ?></p>
                                     <p class="mb-1">时间：<?php echo htmlspecialchars($found['found_time']); ?></p>
-                                    <a class="btn btn-outline-primary btn-sm mt-2" href="detail.php?type=found&id=<?php echo $found['found_id']; ?>">查看详情</a>
+                                    <p class="mb-2 small text-secondary">发布者：<?php echo htmlspecialchars($found['username'] ?? '用户'); ?> | 发布时间：<?php echo htmlspecialchars($found['created_at']); ?></p>
+                                    <div class="d-flex gap-2">
+                                        <a class="btn btn-outline-primary btn-sm flex-grow-1" href="detail.php?type=found&id=<?php echo $found['found_id']; ?>">查看详情</a>
+                                        <?php if ($is_login && (int)$found['user_id'] === (int)$_SESSION['user_id']): ?>
+                                            <a class="btn btn-outline-warning btn-sm" href="edit_post.php?type=found&id=<?php echo $found['found_id']; ?>">编辑</a>
+                                            <a class="btn btn-outline-danger btn-sm" href="api/delete_action.php?type=found&id=<?php echo $found['found_id']; ?>" onclick="return confirm('确定要删除吗？');">删除</a>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>

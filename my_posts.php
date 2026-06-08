@@ -5,13 +5,11 @@ require_once 'config/db.php';
 $user_id = $_SESSION['user_id'];
 $username = $_SESSION['username'];
 
-// 获取消息
 $delete_success = isset($_GET['delete']) && $_GET['delete'] === 'success';
 $status_success = isset($_GET['status']) && $_GET['status'] === 'success';
 $update_success = isset($_GET['update']) && $_GET['update'] === 'success';
 $error = isset($_GET['error']) ? $_GET['error'] : '';
 
-// 错误消息映射
 $error_messages = [
     'invalid_params' => '无效的参数',
     'invalid_id' => '无效的ID',
@@ -20,7 +18,6 @@ $error_messages = [
     'delete_failed' => '删除失败，请稍后重试'
 ];
 
-// 获取失物信息
 $lost_sql = "SELECT lost_id, title, description, lost_location, lost_time, contact, status, image, created_at 
              FROM lost_items 
              WHERE user_id = ? 
@@ -33,7 +30,6 @@ $lost_result = mysqli_stmt_get_result($lost_stmt);
 $lost_items = mysqli_fetch_all($lost_result, MYSQLI_ASSOC);
 mysqli_stmt_close($lost_stmt);
 
-// 获取招领信息
 $found_sql = "SELECT found_id, title, description, found_location, found_time, contact, status, image, created_at 
               FROM found_items 
               WHERE user_id = ? 
@@ -46,7 +42,6 @@ $found_result = mysqli_stmt_get_result($found_stmt);
 $found_items = mysqli_fetch_all($found_result, MYSQLI_ASSOC);
 mysqli_stmt_close($found_stmt);
 
-// 状态转换函数
 function getStatusBadge($status, $type) {
     $statusMap = [
         'lost' => [
@@ -134,7 +129,6 @@ function getStatusColor($status, $type) {
                     </div>
                 <?php endif; ?>
 
-                <!-- 失物信息部分 -->
                 <div class="mb-5">
                     <h2 class="h4 mb-3">我发布的失物</h2>
                     <?php if (count($lost_items) > 0): ?>
@@ -143,7 +137,7 @@ function getStatusColor($status, $type) {
                                 <div class="col-12">
                                     <div class="card border-0 shadow-sm h-100">
                                         <div class="row g-0">
-                                            <?php if (!empty($item['image']) && file_exists($item['image'])): ?>
+                                            <?php if (!empty($item['image'])): ?>
                                                 <div class="col-md-3">
                                                     <img src="<?php echo htmlspecialchars($item['image']); ?>" 
                                                          class="img-fluid rounded-start" 
@@ -170,8 +164,8 @@ function getStatusColor($status, $type) {
                                                         </div>
 
                                                         <p class="card-text text-muted">
-                                                            <?php echo htmlspecialchars(substr($item['description'], 0, 100)); ?>
-                                                            <?php if (strlen($item['description']) > 100): ?>...<?php endif; ?>
+                                                            <?php echo htmlspecialchars(mb_substr($item['description'], 0, 100, 'UTF-8')); ?>
+                                                            <?php if (mb_strlen($item['description'], 'UTF-8') > 100): ?>...<?php endif; ?>
                                                         </p>
 
                                                         <div class="row text-sm mb-3">
@@ -222,7 +216,6 @@ function getStatusColor($status, $type) {
                     <?php endif; ?>
                 </div>
 
-                <!-- 招领信息部分 -->
                 <div class="mb-5">
                     <h2 class="h4 mb-3">我发布的招领</h2>
                     <?php if (count($found_items) > 0): ?>
@@ -231,7 +224,7 @@ function getStatusColor($status, $type) {
                                 <div class="col-12">
                                     <div class="card border-0 shadow-sm h-100">
                                         <div class="row g-0">
-                                            <?php if (!empty($item['image']) && file_exists($item['image'])): ?>
+                                            <?php if (!empty($item['image'])): ?>
                                                 <div class="col-md-3">
                                                     <img src="<?php echo htmlspecialchars($item['image']); ?>" 
                                                          class="img-fluid rounded-start" 
@@ -258,8 +251,8 @@ function getStatusColor($status, $type) {
                                                         </div>
 
                                                         <p class="card-text text-muted">
-                                                            <?php echo htmlspecialchars(substr($item['description'], 0, 100)); ?>
-                                                            <?php if (strlen($item['description']) > 100): ?>...<?php endif; ?>
+                                                            <?php echo htmlspecialchars(mb_substr($item['description'], 0, 100, 'UTF-8')); ?>
+                                                            <?php if (mb_strlen($item['description'], 'UTF-8') > 100): ?>...<?php endif; ?>
                                                         </p>
 
                                                         <div class="row text-sm mb-3">

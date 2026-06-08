@@ -103,17 +103,12 @@ if ($type !== 'lost' && $type !== 'found' || !is_numeric($id)) {
                                 <span class="badge text-bg-primary"><?php echo htmlspecialchars($page_badge); ?></span>
                             </div>
 
-                            <?php if (!empty($current_image) && file_exists($current_image)): ?>
+                            <?php if (!empty($current_image)): ?>
                                 <div class="mb-4">
                                     <label class="form-label">当前图片</label>
                                     <div class="border rounded-3 p-2 bg-white">
                                         <img src="<?php echo htmlspecialchars($current_image); ?>" class="img-fluid rounded" alt="当前图片">
                                     </div>
-                                </div>
-                            <?php elseif (!empty($current_image)): ?>
-                                <div class="mb-4">
-                                    <label class="form-label">当前图片</label>
-                                    <div class="alert alert-warning mb-0" role="alert">图片文件不存在，无法预览。</div>
                                 </div>
                             <?php endif; ?>
 

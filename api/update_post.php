@@ -24,7 +24,11 @@ if ($title === '' || $description === '' || $location === '' || $item_time === '
 }
 
 $id = intval($id);
-$item_time = str_replace('T', ' ', $item_time) . ':00';
+// Convert time format from HTML5 datetime-local to MySQL datetime format
+$item_time = date('Y-m-d H:i:s', strtotime($item_time));
+if ($item_time === '1970-01-01 08:00:00' || !$item_time) {
+    exit('时间格式错误');
+}
 
 if ($type === 'lost') {
     $select_sql = "SELECT image FROM lost_items WHERE lost_id = ? AND user_id = ?";
@@ -66,10 +70,20 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         exit('仅支持 JPG、JPEG、PNG、GIF 图片');
     }
 
+    // Validate that the uploaded file is actually an image
+    $image_info = getimagesize($_FILES['image']['tmp_name']);
+    if ($image_info === false) {
+        exit('上传的文件不是有效的图片');
+    }
+
     $file_name = uniqid('img_', true) . '.' . $ext;
     $save_path = '../uploads/' . $file_name;
 
     if (move_uploaded_file($_FILES['image']['tmp_name'], $save_path)) {
+        // Delete old image file if it exists and is not empty
+        if (!empty($existing_image) && file_exists('../' . $existing_image)) {
+            @unlink('../' . $existing_image);
+        }
         $image_path = 'uploads/' . $file_name;
     }
 }

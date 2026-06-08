@@ -60,7 +60,7 @@ $success = isset($_GET['success']) && $_GET['success'] === '1';
 
                             <div class="mb-3">
                                 <label for="item_time" class="form-label">时间</label>
-                                <input type="datetime-local" class="form-control" id="item_time" name="item_time" required>
+                                <input type="datetime-local" class="form-control" id="item_time" name="item_time" max="<?php echo date('Y-m-d\TH:i'); ?>"  required>                            
                             </div>
 
                             <div class="mb-3">
@@ -82,6 +82,12 @@ $success = isset($_GET['success']) && $_GET['success'] === '1';
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+        var now = new Date();
+        now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); 
+        document.getElementById('item_time').value = now.toISOString().slice(0, 16);
+</script>
+
 </html>

@@ -9,10 +9,10 @@ $type = isset($_GET['type']) ? $_GET['type'] : '';
 $id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 if ($type === 'lost') {
-    $sql = "SELECT * FROM lost_items WHERE lost_id = ?";
+    $sql = "SELECT li.*, u.username FROM lost_items li LEFT JOIN users u ON li.user_id = u.user_id WHERE li.lost_id = ?";
     $page_title = '失物详情';
 } elseif ($type === 'found') {
-    $sql = "SELECT * FROM found_items WHERE found_id = ?";
+    $sql = "SELECT fi.*, u.username FROM found_items fi LEFT JOIN users u ON fi.user_id = u.user_id WHERE fi.found_id = ?";
     $page_title = '招领详情';
 } else {
     exit('类型错误');
@@ -26,21 +26,27 @@ if (!$stmt) {
 
 mysqli_stmt_bind_param($stmt, "i", $id);
 mysqli_stmt_execute($stmt);
-mysqli_stmt_store_result($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$item = mysqli_fetch_assoc($result);
 
-if (mysqli_stmt_num_rows($stmt) !== 1) {
+if (!$item) {
     mysqli_stmt_close($stmt);
     mysqli_close($conn);
     exit('信息不存在');
 }
 
-if ($type === 'lost') {
-    mysqli_stmt_bind_result($stmt, $item_id, $user_id, $title, $description, $location, $item_time, $contact, $image, $status, $created_at);
-} else {
-    mysqli_stmt_bind_result($stmt, $item_id, $user_id, $title, $description, $location, $item_time, $contact, $image, $status, $created_at);
-}
-
-mysqli_stmt_fetch($stmt);
+// Extract values from associative array
+$item_id = $item[$type === 'lost' ? 'lost_id' : 'found_id'];
+$user_id = $item['user_id'];
+$title = $item['title'];
+$description = $item['description'];
+$location = $item[$type === 'lost' ? 'lost_location' : 'found_location'];
+$item_time = $item[$type === 'lost' ? 'lost_time' : 'found_time'];
+$contact = $item['contact'];
+$image = $item['image'];
+$status = $item['status'];
+$created_at = $item['created_at'];
+$author_username = $item['username'];
 
 function getStatusLabelAndClass($status, $type) {
     $map = [
@@ -87,7 +93,7 @@ function getStatusLabelAndClass($status, $type) {
         <div class="row justify-content-center">
             <div class="col-12 col-lg-8">
                 <div class="card border-0 shadow-sm">
-                    <?php if ($image !== ''): ?>
+                    <?php if (!empty($image)): ?>
                         <img src="<?php echo htmlspecialchars($image); ?>" class="card-img-top" alt="物品图片">
                     <?php endif; ?>
 
@@ -109,9 +115,16 @@ function getStatusLabelAndClass($status, $type) {
                         <p class="mb-2">地点：<?php echo htmlspecialchars($location); ?></p>
                         <p class="mb-2">时间：<?php echo htmlspecialchars($item_time); ?></p>
                         <p class="mb-2">联系方式：<?php echo htmlspecialchars($contact); ?></p>
+                        <p class="mb-2">发布者：<?php echo htmlspecialchars($author_username ?? '用户'); ?></p>
                         <p class="mb-4">发布时间：<?php echo htmlspecialchars($created_at); ?></p>
 
-                        <a class="btn btn-outline-secondary" href="index.php">返回首页</a>
+                        <div class="d-flex gap-2">
+                            <a class="btn btn-outline-secondary" href="index.php">返回首页</a>
+                            <?php if ($is_login && (int)$user_id === (int)$_SESSION['user_id']): ?>
+                                <a class="btn btn-outline-warning" href="edit_post.php?type=<?php echo htmlspecialchars($type); ?>&id=<?php echo htmlspecialchars($item_id); ?>">编辑</a>
+                                <a class="btn btn-outline-danger" href="api/delete_action.php?type=<?php echo htmlspecialchars($type); ?>&id=<?php echo htmlspecialchars($item_id); ?>" onclick="return confirm('确定要删除吗？');">删除</a>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -1,9 +1,9 @@
 <?php
 
 $servername = "localhost";
-$username   = "root";
-$password   = "241002961";
-$database   = "campus_lostfound";
+$username = "root";
+$password = "241002961";
+$database = "campus_lostfound";
 
 $conn = mysqli_connect(
     $servername,
