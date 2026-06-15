@@ -1,5 +1,4 @@
 <?php
-// 用户注册页面
 ?>
 <!DOCTYPE html>
 <html lang="zh-CN">

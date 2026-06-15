@@ -70,7 +70,22 @@ $success = isset($_GET['success']) && $_GET['success'] === '1';
 
                             <div class="mb-4">
                                 <label for="image" class="form-label">图片</label>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+
+                                <input
+                                    type="file"
+                                    class="form-control"
+                                    id="image"
+                                    name="image"
+                                    accept="image/*">
+
+                                <div class="mt-3">
+                                    <img
+                                        id="imagePreview"
+                                        src=""
+                                        alt="图片预览"
+                                        class="img-fluid rounded border"
+                                        style="max-height: 300px; display: none;">
+                                </div>
                             </div>
 
                             <button type="submit" class="btn btn-primary">提交发布</button>
@@ -85,9 +100,26 @@ $success = isset($_GET['success']) && $_GET['success'] === '1';
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-        var now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); 
-        document.getElementById('item_time').value = now.toISOString().slice(0, 16);
+    var now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+
+    document.getElementById('item_time').value =
+        now.toISOString().slice(0, 16);
+        
+    document.getElementById('image').addEventListener('change', function () {
+
+        const file = this.files[0];
+        const preview = document.getElementById('imagePreview');
+
+        if (!file) {
+            preview.style.display = 'none';
+            preview.src = '';
+            return;
+        }
+
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+    });
 </script>
 
 </html>

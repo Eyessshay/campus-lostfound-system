@@ -1,5 +1,4 @@
 <?php
-// 用户登录页面
 $registered = isset($_GET['registered']) && $_GET['registered'] === '1';
 $error = isset($_GET['error']) ? $_GET['error'] : '';
 ?>

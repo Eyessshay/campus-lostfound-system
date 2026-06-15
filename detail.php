@@ -35,7 +35,6 @@ if (!$item) {
     exit('信息不存在');
 }
 
-// Extract values from associative array
 $item_id = $item[$type === 'lost' ? 'lost_id' : 'found_id'];
 $user_id = $item['user_id'];
 $title = $item['title'];

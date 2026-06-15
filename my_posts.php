@@ -81,6 +81,40 @@ function getStatusColor($status, $type) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的发布信息 - 校园失物招领系统</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+    .img-placeholder {
+        height: 200px;
+        background-color: #f1f1f1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #999;
+        border-radius: 0.25rem 0 0 0.25rem;
+    }
+
+    .card-inner-row {
+        margin: 0 !important;
+    }
+
+    .card-inner-col {
+        padding: 0 !important;
+    }
+
+    .card-body-custom {
+        padding: 1rem 1rem 1rem 1.25rem !important;
+    }
+
+    .card-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .card {
+        min-width: 0;
+        width: 100%;
+    }
+</style>
 </head>
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg bg-white border-bottom">
@@ -136,19 +170,25 @@ function getStatusColor($status, $type) {
                             <?php foreach ($lost_items as $item): ?>
                                 <div class="col-12">
                                     <div class="card border-0 shadow-sm h-100">
-                                        <div class="row g-0">
+                                        <div class="row g-0 card-inner-row">
                                             <?php if (!empty($item['image'])): ?>
-                                                <div class="col-md-3">
-                                                    <img src="<?php echo htmlspecialchars($item['image']); ?>" 
-                                                         class="img-fluid rounded-start" 
-                                                         alt="<?php echo htmlspecialchars($item['title']); ?>"
-                                                         style="height: 200px; object-fit: cover;">
+                                                <div class="col-md-3 card-inner-col">
+                                                    <img src="<?php echo htmlspecialchars($item['image']); ?>"
+                                                        class="img-fluid rounded-start card-image"
+                                                        alt="<?php echo htmlspecialchars($item['title']); ?>">
                                                 </div>
-                                                <div class="col-md-9">
-                                            <?php else: ?>
-                                                <div class="col-12">
-                                            <?php endif; ?>
-                                                    <div class="card-body">
+
+                        <div class="col-md-9 card-inner-col">
+                    <?php else: ?>
+
+                        <div class="col-md-3 card-inner-col">
+                            <div class="img-placeholder">
+                                暂无图片
+                            </div>
+                        </div>
+                        <div class="col-md-9 card-inner-col">
+                    <?php endif; ?>
+                                                    <div class="card-body card-body-custom">
                                                         <div class="d-flex justify-content-between align-items-start mb-2">
                                                             <div>
                                                                 <h5 class="card-title mb-1">
@@ -189,17 +229,17 @@ function getStatusColor($status, $type) {
 
                                                         <div class="d-flex gap-2">
                                                             <a href="detail.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
-                                                               class="btn btn-sm btn-outline-primary">查看详情</a>
+                                                                class="btn btn-sm btn-outline-primary">查看详情</a>
                                                                                 <?php if ($item['status'] === 'pending'): ?>
-                                                                                     <a href="api/update_status.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
-                                                                                         class="btn btn-sm btn-success"
-                                                                                         onclick="return confirm('确认已经找回该物品吗？');">标记已找回</a>
+                                                                                        <a href="api/update_status.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
+                                                                                            class="btn btn-sm btn-success"
+                                                                                            onclick="return confirm('确认已经找回该物品吗？');">标记已找回</a>
                                                                                 <?php endif; ?>
                                                                                 <a href="edit_post.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
-                                                               class="btn btn-sm btn-outline-secondary">编辑</a>
+                                                                class="btn btn-sm btn-outline-secondary">编辑</a>
                                                             <a href="api/delete_action.php?type=lost&id=<?php echo $item['lost_id']; ?>" 
-                                                               class="btn btn-sm btn-outline-danger"
-                                                               onclick="return confirm('确定删除此信息吗？');">删除</a>
+                                                                class="btn btn-sm btn-outline-danger"
+                                                                onclick="return confirm('确定删除此信息吗？');">删除</a>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -223,19 +263,23 @@ function getStatusColor($status, $type) {
                             <?php foreach ($found_items as $item): ?>
                                 <div class="col-12">
                                     <div class="card border-0 shadow-sm h-100">
-                                        <div class="row g-0">
+                                        <div class="row g-0 card-inner-row">
                                             <?php if (!empty($item['image'])): ?>
-                                                <div class="col-md-3">
-                                                    <img src="<?php echo htmlspecialchars($item['image']); ?>" 
-                                                         class="img-fluid rounded-start" 
-                                                         alt="<?php echo htmlspecialchars($item['title']); ?>"
-                                                         style="height: 200px; object-fit: cover;">
+                                                <div class="col-md-3 card-inner-col">
+                                                    <img src="<?php echo htmlspecialchars($item['image']); ?>"
+                                                        class="img-fluid rounded-start card-image"
+                                                        alt="<?php echo htmlspecialchars($item['title']); ?>">
                                                 </div>
-                                                <div class="col-md-9">
+                                                <div class="col-md-9 card-inner-col">
                                             <?php else: ?>
-                                                <div class="col-12">
+                                                <div class="col-md-3 card-inner-col">
+                                                    <div class="img-placeholder">
+                                                        暂无图片
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-9 card-inner-col">
                                             <?php endif; ?>
-                                                    <div class="card-body">
+                                                    <div class="card-body card-body-custom">
                                                         <div class="d-flex justify-content-between align-items-start mb-2">
                                                             <div>
                                                                 <h5 class="card-title mb-1">

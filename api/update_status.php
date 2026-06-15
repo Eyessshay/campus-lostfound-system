@@ -19,8 +19,7 @@ if (!in_array($type, ['lost', 'found'], true) || filter_var($id, FILTER_VALIDATE
 
 $id = intval($id);
 
-// ✅ MODIFIED: 添加状态条件，防止重复更新
-// 防止用户重复点击已找回/已认领按钮
+
 if ($type === 'lost') {
     $sql = "UPDATE lost_items SET status='found' WHERE lost_id=? AND user_id=? AND status='pending'";
     $notFoundSql = "SELECT 1 FROM lost_items WHERE lost_id=? AND user_id=? LIMIT 1";
